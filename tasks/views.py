@@ -43,3 +43,15 @@ def single_task(request,task_id):
         task = TaskDetail.objects.get(id=task_id)
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    elif request.method == 'PUT':
+        try:
+            task = TaskDetail.objects.get(id=task_id)
+        except:
+            return Response({"Error": "There is no task at that id"},status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = TaskSerializer(task,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
