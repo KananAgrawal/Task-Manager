@@ -26,3 +26,15 @@ def task_detail(request):
         serializer = TaskSerializer(tasks,many=True)
         return Response({'tasks': serializer.data},status=status.HTTP_200_OK)
     
+@api_view(['GET','PUT','DELETE'])
+def single_task(request,task_id):
+
+    if request.method == 'GET':
+        try:
+            task = TaskDetail.objects.get(id=task_id)
+
+        except:
+            return Response({"error":"There is no task at that id"},status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TaskSerializer(task)
+        return Response(serializer.data,status=status.HTTP_200_OK)
