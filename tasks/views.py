@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view
 # Create your views here.
 
 
-@api_view(['POST','GET'])
+@api_view(['POST','GET','DELETE'])
 def task_detail(request):
     if request.method == 'POST':
         task_data = request.data.get('tasks',[])
@@ -25,6 +25,17 @@ def task_detail(request):
         tasks = TaskDetail.objects.all().order_by('id')
         serializer = TaskSerializer(tasks,many=True)
         return Response({'tasks': serializer.data},status=status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        task_data = request.data.get('tasks',[])
+        task_ids = [task.get('id') for task in task_data]
+        tasks_delete = TaskDetail.objects.filter(id__in=task_ids)
+        
+        if len(tasks_delete)!=len(task_ids):
+            return Response({"Error":"Some tasks IDs do not exist"},status=status.HTTP_400_BAD_REQUEST)
+        tasks_delete.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     
 @api_view(['GET','PUT','DELETE'])
 def single_task(request,task_id):
@@ -54,4 +65,8 @@ def single_task(request,task_id):
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    
+
         
