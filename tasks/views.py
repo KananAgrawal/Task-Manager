@@ -21,5 +21,8 @@ def task_detail(request):
             return Response({'task':t_id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-       
+    elif request.method == 'GET':
+        tasks = TaskDetail.objects.all().order_by('id')
+        serializer = TaskSerializer(tasks,many=True)
+        return Response({'tasks': serializer.data})
     
