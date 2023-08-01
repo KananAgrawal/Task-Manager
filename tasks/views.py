@@ -38,3 +38,8 @@ def single_task(request,task_id):
 
         serializer = TaskSerializer(task)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        task = TaskDetail.objects.get(id=task_id)
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
